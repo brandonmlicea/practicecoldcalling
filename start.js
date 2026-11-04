@@ -1,6 +1,6 @@
 import { createServer } from "node:http";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { createInterface } from "node:readline/promises";
+import { createInterface } from "node:readline";
 import { Readable } from "node:stream";
 import { exec } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -14,8 +14,14 @@ async function setup() {
 		console.error("No .env yet. Copy .env.example to .env, fill it in, then run npm start again.");
 		process.exit(1);
 	}
-	const rl = createInterface({ input: process.stdin, output: process.stdout });
-	const ask = async (question, fallback = "") => (await rl.question(fallback ? `${question} [${fallback}]: ` : `${question}: `)).trim() || fallback;
+	const rl = createInterface({ input: process.stdin });
+	const answers = rl[Symbol.asyncIterator]();
+	const ask = async (question, fallback = "") => {
+		process.stdout.write(fallback ? `${question} [${fallback}]: ` : `${question}: `);
+		const { value, done } = await answers.next();
+		if (done) process.exit(1);
+		return value.trim() || fallback;
+	};
 	console.log("\nFirst run. Any OpenAI-compatible API works: OpenAI, Ollama, LM Studio, DeepInfra, Groq, Together...\n");
 	const url = await ask("API base URL", "https://api.openai.com/v1");
 	const key = await ask("API key (blank if your server needs none)");
