@@ -1,0 +1,15 @@
+{
+  "name": "practicecoldcalling",
+  "version": "1.0.0",
+  "description": "Practice cold calls against an AI prospect, then get graded. Runs on localhost with any OpenAI-compatible model.",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=20.12" },
+  "scripts": {
+    "start": "node start.js",
+    "qa": "node qa/run.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.64.1"
+  }
+}
